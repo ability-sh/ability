@@ -12,7 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: build
-        run: go build -o ability
+        run: |
+          go mod tidy
+          go build -o ability
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{secrets.GITHUB_TOKEN}}"
