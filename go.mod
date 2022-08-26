@@ -1,6 +1,6 @@
 module github.com/ability-sh/ability
 
-go 1.18
+go 1.17
 
 require (
 	github.com/ability-sh/abi-lib v1.0.3
