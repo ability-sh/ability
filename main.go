@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"strings"
 
 	"github.com/ability-sh/ability/abi"
 	"github.com/ability-sh/ability/commander"
@@ -29,10 +30,22 @@ func main() {
 
 		fs.Parse(args)
 
-		if *fs_help || len(args) == 0 {
+		n := len(args)
+
+		if *fs_help || n == 0 {
 			cmd.Run(args, true)
 			return true
 		}
+
+		i := 0
+
+		for ; i < n; i++ {
+			if strings.HasPrefix(args[i], "-") {
+				break
+			}
+		}
+
+		fs.Parse(args[i:])
 
 		abi.SetRegistry(abi.NewACRegistry(*fs_registry))
 
