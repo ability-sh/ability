@@ -32,7 +32,7 @@ func md5File(f string) (string, error) {
 	return hex.EncodeToString(m.Sum(nil)), nil
 }
 
-func Publish(fs_file string, fs_ver string) {
+func Publish(fs_file string, fs_ver string, fs_number string) {
 
 	registry := GetRegistry()
 
@@ -89,6 +89,11 @@ func Publish(fs_file string, fs_ver string) {
 	if fs_ver != "" {
 		ver = fs_ver
 		dynamic.Set(info, "ver", fs_ver)
+	}
+
+	if fs_number != "" {
+		ver = fmt.Sprintf("%s-%s", strings.Split(ver, "-")[0], fs_number)
+		dynamic.Set(info, "ver", ver)
 	}
 
 	if appid == "" {

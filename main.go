@@ -304,6 +304,7 @@ func main() {
 
 				fs_file := fs.String("file", "", "")
 				fs_ver := fs.String("ver", "", "")
+				fs_number := fs.String("number", "", "")
 
 				if usage {
 					fs.Usage()
@@ -312,7 +313,7 @@ func main() {
 
 				fs.Parse(args)
 
-				abi.Publish(*fs_file, *fs_ver)
+				abi.Publish(*fs_file, *fs_ver, *fs_number)
 
 				return false
 			})
