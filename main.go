@@ -17,7 +17,7 @@ func main() {
 
 	app.SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
 
-		fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+		fs := flag.NewFlagSet(cmd.Name, flag.ContinueOnError)
 
 		fs_help := fs.Bool("help", false, "")
 		fs_registry := fs.String("registry", "https://ac.ability.sh", "")
