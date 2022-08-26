@@ -49,6 +49,8 @@ func main() {
 
 			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
 
+			fs.String("registry", "https://ac.ability.sh", "")
+
 			if usage {
 				fs.Usage()
 				return false
@@ -64,6 +66,8 @@ func main() {
 		SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
 
 			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+
+			fs.String("registry", "https://ac.ability.sh", "")
 
 			if usage {
 				fs.Usage()
@@ -82,6 +86,9 @@ func main() {
 		SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
 
 			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+
+			fs.String("registry", "https://ac.ability.sh", "")
+			fs.String("token", "", "")
 
 			fs_json := fs.String("json", "", "")
 			fs_yaml := fs.String("yaml", "", "")
@@ -105,6 +112,9 @@ func main() {
 
 			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
 
+			fs.String("registry", "https://ac.ability.sh", "")
+			fs.String("token", "", "")
+
 			fs_id := fs.String("id", "", "Container ID")
 
 			if usage {
@@ -124,6 +134,9 @@ func main() {
 		SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
 
 			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+
+			fs.String("registry", "https://ac.ability.sh", "")
+			fs.String("token", "", "")
 
 			fs_id := fs.String("id", "", "Container ID")
 			fs_json := fs.String("json", "", "")
@@ -147,6 +160,9 @@ func main() {
 		SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
 
 			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+
+			fs.String("registry", "https://ac.ability.sh", "")
+			fs.String("token", "", "")
 
 			fs_id := fs.String("id", "", "Container ID")
 			fs_format := fs.String("format", "", "json|yaml")
@@ -172,6 +188,9 @@ func main() {
 
 				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
 
+				fs.String("registry", "https://ac.ability.sh", "")
+				fs.String("token", "", "")
+
 				fs_json := fs.String("json", "", "")
 				fs_yaml := fs.String("yaml", "", "")
 				fs_file := fs.String("file", "", "")
@@ -193,6 +212,9 @@ func main() {
 			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
 
 				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+
+				fs.String("registry", "https://ac.ability.sh", "")
+				fs.String("token", "", "")
 
 				fs_appid := fs.String("appid", "", "App ID")
 				fs_json := fs.String("json", "", "")
@@ -217,6 +239,9 @@ func main() {
 
 				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
 
+				fs.String("registry", "https://ac.ability.sh", "")
+				fs.String("token", "", "")
+
 				fs_appid := fs.String("appid", "", "App ID")
 				fs_format := fs.String("format", "", "json|yaml")
 
@@ -237,6 +262,9 @@ func main() {
 			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
 
 				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+
+				fs.String("registry", "https://ac.ability.sh", "")
+				fs.String("token", "", "")
 
 				fs_appid := fs.String("appid", "", "App ID")
 				fs_ver := fs.String("ver", "", "App Ver")
@@ -260,6 +288,9 @@ func main() {
 
 				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
 
+				fs.String("registry", "https://ac.ability.sh", "")
+				fs.String("token", "", "")
+
 				fs_appid := fs.String("appid", "", "App ID")
 				fs_id := fs.String("id", "", "Container ID")
 
@@ -281,6 +312,9 @@ func main() {
 
 				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
 
+				fs.String("registry", "https://ac.ability.sh", "")
+				fs.String("token", "", "")
+
 				fs_appid := fs.String("appid", "", "App ID")
 				fs_id := fs.String("id", "", "Container ID")
 
@@ -301,6 +335,9 @@ func main() {
 			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
 
 				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+
+				fs.String("registry", "https://ac.ability.sh", "")
+				fs.String("token", "", "")
 
 				fs_file := fs.String("file", "", "")
 				fs_ver := fs.String("ver", "", "")
@@ -327,6 +364,9 @@ func main() {
 
 				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
 
+				fs.String("registry", "https://ac.ability.sh", "")
+				fs.String("token", "", "")
+
 				if usage {
 					fs.Usage()
 					return false
@@ -343,6 +383,9 @@ func main() {
 			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
 
 				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+
+				fs.String("registry", "https://ac.ability.sh", "")
+				fs.String("token", "", "")
 
 				if usage {
 					fs.Usage()
