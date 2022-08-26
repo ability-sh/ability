@@ -1,0 +1,23 @@
+name: latest
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: env
+    steps:
+      - uses: actions/checkout@v3
+      - name: build
+        run: go build -o ability
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{secrets.GITHUB_TOKEN}}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            ability
