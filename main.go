@@ -11,6 +11,13 @@ import (
 	"github.com/ability-sh/ability/commander"
 )
 
+type nilWriter struct {
+}
+
+func (w *nilWriter) Write(p []byte) (n int, err error) {
+	return len(p), nil
+}
+
 func main() {
 
 	app := commander.NewCommand("ability")
@@ -27,6 +34,8 @@ func main() {
 			fs.Usage()
 			return false
 		}
+
+		fs.SetOutput(&nilWriter{})
 
 		fs.Parse(args)
 
