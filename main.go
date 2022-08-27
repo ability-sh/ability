@@ -1,11 +1,9 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"runtime"
-	"strings"
 
 	"github.com/ability-sh/ability/abi"
 	"github.com/ability-sh/ability/commander"
@@ -22,183 +20,80 @@ func main() {
 
 	app := commander.NewCommand("ability")
 
-	app.SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
+	app.
+		SetString("registry", "https://ac.ability.sh", "").
+		SetString("token", "", "").
+		SetBool("help", "").
+		SetAction(func(cmd *commander.Command) bool {
 
-		fs := flag.NewFlagSet(cmd.Name, flag.ContinueOnError)
-
-		fs_help := fs.Bool("help", false, "")
-		fs_registry := fs.String("registry", "https://ac.ability.sh", "")
-		fs_token := fs.String("token", "", "")
-
-		if usage {
-			fs.Usage()
-			return false
-		}
-
-		fs.SetOutput(&nilWriter{})
-
-		fs.Parse(args)
-
-		n := len(args)
-
-		if *fs_help || n == 0 {
-			cmd.Run(args, true)
-			return true
-		}
-
-		i := 0
-
-		for ; i < n; i++ {
-			if strings.HasPrefix(args[i], "-") {
-				break
+			if cmd.Bool("help") {
+				cmd.Usage()
+				return true
 			}
-		}
 
-		fs.Parse(args[i:])
+			abi.SetRegistry(abi.NewACRegistry(cmd.String("registry")))
 
-		abi.SetRegistry(abi.NewACRegistry(*fs_registry))
+			token := cmd.String("token")
 
-		if *fs_token != "" {
-			abi.GetRegistry().SetToken(*fs_token)
-		}
+			if token != "" {
+				abi.GetRegistry().SetToken(token)
+			}
 
-		return false
-	})
+			return false
+		})
 
 	app.
 		SubCommand("login").
-		SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
-
-			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
-
-			fs.String("registry", "https://ac.ability.sh", "")
-
-			if usage {
-				fs.Usage()
-				return false
-			}
-
+		SetAction(func(cmd *commander.Command) bool {
 			abi.Login()
-
-			return false
+			return true
 		})
 
 	app.
 		SubCommand("logout").
-		SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
-
-			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
-
-			fs.String("registry", "https://ac.ability.sh", "")
-
-			if usage {
-				fs.Usage()
-				return false
-			}
-
-			fs.Parse(args)
-
+		SetAction(func(cmd *commander.Command) bool {
 			abi.Logout()
-
-			return false
+			return true
 		})
 
 	app.
 		SubCommand("create").
-		SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
-
-			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
-
-			fs.String("registry", "https://ac.ability.sh", "")
-			fs.String("token", "", "")
-
-			fs_json := fs.String("json", "", "")
-			fs_yaml := fs.String("yaml", "", "")
-			fs_file := fs.String("file", "", "")
-
-			if usage {
-				fs.Usage()
-				return false
-			}
-
-			fs.Parse(args)
-
-			abi.Create(*fs_json, *fs_yaml, *fs_file)
-
-			return false
+		SetString("json", "", "").
+		SetString("yaml", "", "").
+		SetString("file", "", "").
+		SetAction(func(cmd *commander.Command) bool {
+			abi.Create(cmd.String("json"), cmd.String("yaml"), cmd.String("file"))
+			return true
 		})
 
 	app.
 		SubCommand("setsecret").
-		SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
-
-			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
-
-			fs.String("registry", "https://ac.ability.sh", "")
-			fs.String("token", "", "")
-
-			fs_id := fs.String("id", "", "Container ID")
-
-			if usage {
-				fs.Usage()
-				return false
-			}
-
-			fs.Parse(args)
-
-			abi.SetSecret(*fs_id)
-
-			return false
+		SetString("id", "", "Container ID").
+		SetAction(func(cmd *commander.Command) bool {
+			abi.SetSecret(cmd.String("id"))
+			return true
 		})
 
 	app.
 		SubCommand("setconfig").
-		SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
-
-			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
-
-			fs.String("registry", "https://ac.ability.sh", "")
-			fs.String("token", "", "")
-
-			fs_id := fs.String("id", "", "Container ID")
-			fs_json := fs.String("json", "", "")
-			fs_yaml := fs.String("yaml", "", "")
-			fs_file := fs.String("file", "", "")
-
-			if usage {
-				fs.Usage()
-				return false
-			}
-
-			fs.Parse(args)
-
-			abi.SetConfig(*fs_id, *fs_json, *fs_yaml, *fs_file)
-
+		SetString("id", "", "Container ID").
+		SetString("json", "", "").
+		SetString("yaml", "", "").
+		SetString("file", "", "").
+		SetAction(func(cmd *commander.Command) bool {
+			abi.SetConfig(cmd.String("id"), cmd.String("json"), cmd.String("yaml"), cmd.String("file"))
 			return false
 		})
 
 	app.
 		SubCommand("getconfig").
-		SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
+		SetString("id", "", "Container ID").
+		SetString("format", "", "json|yaml").
+		SetAction(func(cmd *commander.Command) bool {
 
-			fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+			abi.GetConfig(cmd.String("id"), cmd.String("format"))
 
-			fs.String("registry", "https://ac.ability.sh", "")
-			fs.String("token", "", "")
-
-			fs_id := fs.String("id", "", "Container ID")
-			fs_format := fs.String("format", "", "json|yaml")
-
-			if usage {
-				fs.Usage()
-				return false
-			}
-
-			fs.Parse(args)
-
-			abi.GetConfig(*fs_id, *fs_format)
-
-			return false
+			return true
 		})
 
 	{
@@ -206,175 +101,84 @@ func main() {
 
 		s.
 			SubCommand("create").
-			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
+			SetString("json", "", "").
+			SetString("yaml", "", "").
+			SetString("file", "", "").
+			SetAction(func(cmd *commander.Command) bool {
 
-				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+				abi.CreateApp(cmd.String("json"), cmd.String("yaml"), cmd.String("file"))
 
-				fs.String("registry", "https://ac.ability.sh", "")
-				fs.String("token", "", "")
-
-				fs_json := fs.String("json", "", "")
-				fs_yaml := fs.String("yaml", "", "")
-				fs_file := fs.String("file", "", "")
-
-				if usage {
-					fs.Usage()
-					return false
-				}
-
-				fs.Parse(args)
-
-				abi.CreateApp(*fs_json, *fs_yaml, *fs_file)
-
-				return false
+				return true
 			})
 
 		s.
 			SubCommand("setconfig").
-			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
+			SetString("appid", "", "App ID").
+			SetString("json", "", "").
+			SetString("yaml", "", "").
+			SetString("file", "", "").
+			SetAction(func(cmd *commander.Command) bool {
 
-				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+				abi.SetAppConfig(cmd.String("appid"), cmd.String("json"), cmd.String("yaml"), cmd.String("file"))
 
-				fs.String("registry", "https://ac.ability.sh", "")
-				fs.String("token", "", "")
-
-				fs_appid := fs.String("appid", "", "App ID")
-				fs_json := fs.String("json", "", "")
-				fs_yaml := fs.String("yaml", "", "")
-				fs_file := fs.String("file", "", "")
-
-				if usage {
-					fs.Usage()
-					return false
-				}
-
-				fs.Parse(args)
-
-				abi.SetAppConfig(*fs_appid, *fs_json, *fs_yaml, *fs_file)
-
-				return false
+				return true
 			})
 
 		s.
 			SubCommand("getconfig").
-			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
+			SetString("appid", "", "App ID").
+			SetString("format", "", "json|yaml").
+			SetAction(func(cmd *commander.Command) bool {
 
-				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+				abi.GetAppConfig(cmd.String("appid"), cmd.String("format"))
 
-				fs.String("registry", "https://ac.ability.sh", "")
-				fs.String("token", "", "")
-
-				fs_appid := fs.String("appid", "", "App ID")
-				fs_format := fs.String("format", "", "json|yaml")
-
-				if usage {
-					fs.Usage()
-					return false
-				}
-
-				fs.Parse(args)
-
-				abi.GetAppConfig(*fs_appid, *fs_format)
-
-				return false
+				return true
 			})
 
 		s.
 			SubCommand("getver").
-			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
+			SetString("appid", "", "App ID").
+			SetString("ver", "", "App Ver").
+			SetString("format", "", "json|yaml").
+			SetAction(func(cmd *commander.Command) bool {
 
-				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+				abi.GetAppVerConfig(cmd.String("appid"), cmd.String("ver"), cmd.String("format"))
 
-				fs.String("registry", "https://ac.ability.sh", "")
-				fs.String("token", "", "")
-
-				fs_appid := fs.String("appid", "", "App ID")
-				fs_ver := fs.String("ver", "", "App Ver")
-				fs_format := fs.String("format", "", "json|yaml")
-
-				if usage {
-					fs.Usage()
-					return false
-				}
-
-				fs.Parse(args)
-
-				abi.GetAppVerConfig(*fs_appid, *fs_ver, *fs_format)
-
-				return false
+				return true
 			})
 
 		s.
 			SubCommand("approve").
-			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
+			SetString("appid", "", "App ID").
+			SetString("id", "", "Container ID").
+			SetAction(func(cmd *commander.Command) bool {
 
-				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+				abi.Approve(cmd.String("appid"), cmd.String("id"))
 
-				fs.String("registry", "https://ac.ability.sh", "")
-				fs.String("token", "", "")
-
-				fs_appid := fs.String("appid", "", "App ID")
-				fs_id := fs.String("id", "", "Container ID")
-
-				if usage {
-					fs.Usage()
-					return false
-				}
-
-				fs.Parse(args)
-
-				abi.Approve(*fs_appid, *fs_id)
-
-				return false
+				return true
 			})
 
 		s.
 			SubCommand("unapprove").
-			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
+			SetString("appid", "", "App ID").
+			SetString("id", "", "Container ID").
+			SetAction(func(cmd *commander.Command) bool {
 
-				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+				abi.Unapprove(cmd.String("appid"), cmd.String("id"))
 
-				fs.String("registry", "https://ac.ability.sh", "")
-				fs.String("token", "", "")
-
-				fs_appid := fs.String("appid", "", "App ID")
-				fs_id := fs.String("id", "", "Container ID")
-
-				if usage {
-					fs.Usage()
-					return false
-				}
-
-				fs.Parse(args)
-
-				abi.Unapprove(*fs_appid, *fs_id)
-
-				return false
+				return true
 			})
 
 		s.
 			SubCommand("publish").
-			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
+			SetString("file", "", "").
+			SetString("ver", "", "").
+			SetString("number", "", "").
+			SetAction(func(cmd *commander.Command) bool {
 
-				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
+				abi.Publish(cmd.String("file"), cmd.String("ver"), cmd.String("number"))
 
-				fs.String("registry", "https://ac.ability.sh", "")
-				fs.String("token", "", "")
-
-				fs_file := fs.String("file", "", "")
-				fs_ver := fs.String("ver", "", "")
-				fs_number := fs.String("number", "", "")
-
-				if usage {
-					fs.Usage()
-					return false
-				}
-
-				fs.Parse(args)
-
-				abi.Publish(*fs_file, *fs_ver, *fs_number)
-
-				return false
+				return true
 			})
 	}
 
@@ -382,45 +186,21 @@ func main() {
 		s := app.SubCommand("env")
 		s.
 			SubCommand("os").
-			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
-
-				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
-
-				fs.String("registry", "https://ac.ability.sh", "")
-				fs.String("token", "", "")
-
-				if usage {
-					fs.Usage()
-					return false
-				}
-
-				fs.Parse(args)
+			SetAction(func(cmd *commander.Command) bool {
 
 				fmt.Printf("%s", runtime.GOOS)
 
-				return false
+				return true
 			})
 		s.
 			SubCommand("arch").
-			SetAction(func(cmd *commander.Command, args []string, usage bool) bool {
-
-				fs := flag.NewFlagSet(cmd.Name, flag.ExitOnError)
-
-				fs.String("registry", "https://ac.ability.sh", "")
-				fs.String("token", "", "")
-
-				if usage {
-					fs.Usage()
-					return false
-				}
-
-				fs.Parse(args)
+			SetAction(func(cmd *commander.Command) bool {
 
 				fmt.Printf("%s", runtime.GOARCH)
 
-				return false
+				return true
 			})
 	}
 
-	app.Run(os.Args[1:], false)
+	app.Parse(os.Args[1:])
 }
